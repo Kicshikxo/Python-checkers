@@ -1,6 +1,10 @@
 # Игра Шашки на Python
 ## Скриншот
-![Gameplay screenshot](https://github.com/Kicshikxo/Python-checkers/blob/master/screenshot.png?raw=true)
+
+<p align="center">
+  <img src="https://github.com/Kicshikxo/Python-checkers/blob/master/screenshot.png?raw=true" alt="Gameplay screenshot"/>
+</p>
+
 ## Описание проекта
 Игра Шашки, написанная на Python с использованием графической библиотеки Tkinter.  
 В игре присутствует экспертная система, представленная алгоритмом для нахождения оптимального хода у чёрных шашек, против которых и надо играть
