@@ -70,8 +70,6 @@
 - <details><summary>Checker (checkers/ckecker.py) - Класс шашки</summary>
 
   - Поля
-    - x - Положение на поле по оси X
-    - y - Положение на поле по оси Y
     - type - Тип шашки
   - Методы
     - change_type - Изменить тип шашки
