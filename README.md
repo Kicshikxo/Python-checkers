@@ -37,6 +37,8 @@
 
 </details>
 
+## Описание полей и методов классов
+
 <details><summary>Field (checkers/field.py) - Класс поля</summary>
 
   - Поля
