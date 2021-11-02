@@ -39,7 +39,7 @@
 
 ## Описание полей и методов классов
 
-<details><summary>Field (checkers/field.py) - Класс поля</summary>
+- <details><summary>Field (checkers/field.py) - Класс поля</summary>
 
   - Поля
     - x_size - Ширина поля
@@ -54,7 +54,7 @@
 
 </details>
 
-<details><summary>Checker (checkers/ckecker.py) - Класс шашки</summary>
+- <details><summary>Checker (checkers/ckecker.py) - Класс шашки</summary>
 
   - Поля
     - x - Положение на поле по оси X
@@ -65,7 +65,7 @@
 
 </details>
 
-<details><summary>Move (checkers/move.py) - Класс перемещения</summary>
+- <details><summary>Move (checkers/move.py) - Класс перемещения</summary>
 
   - Поля
     - from_x - Координата начальной точки перемещения по оси X
@@ -75,7 +75,7 @@
 
 </details>
 
-<details><summary>Point (checkers/point.py) - Класс точки на поле</summary>
+- <details><summary>Point (checkers/point.py) - Класс точки на поле</summary>
 
   - Поля
     - x - Положение на поле по оси X
