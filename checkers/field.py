@@ -25,12 +25,10 @@ class Field:
 
     def __generate(self):
         '''Генерация поля с шашками'''
-        self.__checkers = []
+        self.__checkers = [[Checker(x, y) for x in range(self.x_size)] for y in range(self.y_size)]
+        
         for y in range(self.y_size):
-            self.__checkers.append([])
             for x in range(self.x_size):
-                self.__checkers[y].append(Checker(x, y))
-
                 if ((y + x) % 2):
                     if (y < 3):
                         self.__checkers[y][x].change_type(CheckerType.BLACK_REGULAR)
