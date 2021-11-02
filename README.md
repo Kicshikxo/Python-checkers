@@ -10,22 +10,33 @@
 - ANIMATION_SPEED - Определяет скорость анимации перемещения шашек (больше = быстрее)
 - MAX_PREDICTION_DEPTH - Определяет то, сколько следующих ходов экспретная система будет обрабатывать
 - BORDER_WIDTH - Определяет ширину рамки обвода ячейки при наведении или выделении (должно быть чётным числом)
-- Цвета:
+- <details><summary>Цвета</summary>
+
   - FIELD_COLORS - Определяет два цвета для ячеек сетки игрового поля
   - HOVER_BORDER_COLOR - Определяет цвет обводки ячейки при наведении на неё
   - SELECT_BORDER_COLOR - Определяет цвет обводки ячейки при выделении стоящей на ней шашки
   - POSIBLE_MOVE_CIRCLE_COLOR - Определяет цвет кружков, которые появляются на месте возможных ходов выбранной шашки
+
+</details>
+
 ## Описание перечислений (enums) в файле checkers/enums.py
-- SideType - Тип стороны игры:
+- <details><summary>SideType - Тип стороны игры</summary>
+
   - WHITE - Сторона белых
   - BLACK - Сторона чёрных
-- CheckerType - Тип шашки:
+
+</details>
+
+- <details><summary>CheckerType - Тип шашки</summary>
+
   - NONE - Отсутствие типа (ячейка без шашки)
   - WHITE_REGULAR - Белая шашка
   - WHITE_QUEEN - Белая дамка
   - BLACK_REGULAR - Чёрная шашка
   - BLACK_QUEEN - Чёрная дамка
-## Описание полей и методов классов
+
+</details>
+
 <details><summary>Field (checkers/field.py) - Класс поля</summary>
 
   - Поля
