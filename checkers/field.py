@@ -25,7 +25,7 @@ class Field:
 
     def __generate(self):
         '''Генерация поля с шашками'''
-        self.__checkers = [[Checker(x, y) for x in range(self.x_size)] for y in range(self.y_size)]
+        self.__checkers = [[Checker() for x in range(self.x_size)] for y in range(self.y_size)]
         
         for y in range(self.y_size):
             for x in range(self.x_size):
