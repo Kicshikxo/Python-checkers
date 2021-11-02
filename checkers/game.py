@@ -10,6 +10,8 @@ from checkers.move import Move
 from checkers.constants import *
 from checkers.enums import CheckerType, SideType
 
+# TODO Может продолжится ход если пешка съела, но отрывается ход для другой, и можно походить ей
+
 class Game:
     def __init__(self, canvas: Canvas, x_field_size: int, y_field_size: int):
         self.__canvas = canvas
@@ -25,6 +27,17 @@ class Game:
         self.__animated_cell = Point()
 
         self.__init_images()
+
+        # self.__field.at(2,5).change_type(CheckerType.WHITE_QUEEN)
+
+        # self.__handle_move(Move(5, 2, 4, 3))
+
+        self.__k_rez = 0
+        self.__o_rez = 0
+        self.__l_rez = 0
+        self.__n2_moves = []
+
+        # self.proverka_hk(1, [], [])
         
         self.__draw()
 
@@ -193,6 +206,135 @@ class Game:
             # Новая игра
             self.__init__(self.__canvas, self.__field.x_size, self.__field.y_size)
 
+    def __calculate_move(self, side: SideType, current_prediction_depth: int, moves_list: list[Move]) -> list[Move]:
+        if not (moves_list):
+            moves_list = self.__get_moves_list(side)
+
+        if (moves_list):
+            field_copy = deepcopy(self.__field)
+
+            for move in moves_list:
+                self.__handle_move(move, draw=False)
+                required_moves_list = self.__get_required_moves_list(side)
+                if  (required_moves_list):
+                    self.__required_black_moves_list.append(move)
+                    self.__calculate_move(side, current_prediction_depth, required_moves_list)
+
+    def __perform_move(self, side: SideType, moves_list: list[Move]) -> list[Move]:
+        pass
+
+    def proverka_hk(self, current_prediction_depth: int, n_moves, moves_list: list[Move]):
+        print(self.__n2_moves, n_moves)
+
+        if not (moves_list):
+            moves_list = self.__get_moves_list(SideType.BLACK)
+
+        if (moves_list):
+            field_copy = deepcopy(self.__field)
+
+            for move in moves_list:
+                self.__handle_move(move, draw=False)
+                required_moves_list = self.__get_required_moves_list(SideType.BLACK)
+                if  (required_moves_list):
+                    self.proverka_hk(current_prediction_depth, [n_moves + [Move(move.from_x, move.from_y)]], required_moves_list)
+                else:
+                    self.proverka_hi(current_prediction_depth, [])
+                    if (current_prediction_depth == 1):
+                        t_rez = self.__o_rez / self.__k_rez
+
+                        if not (self.__n2_moves):
+                            self.__n2_moves = n_moves + [Move(move.from_x, move.from_y, move.to_x, move.to_y)]
+                            self.__l_rez = t_rez
+
+                        else:
+                            if (t_rez == self.__l_rez):
+                                self.__n2_moves.append(n_moves + [Move(move.from_x, move.from_y, move.to_x, move.to_y)])
+                            if (t_rez > self.__l_rez):
+                                self.__n2_moves = [n_moves + [Move(move.from_x, move.from_y, move.to_x, move.to_y)]]
+                                self.__l_rez = t_rez
+
+                        self.__o_rez = 0
+                        self.__k_rez = 0
+
+                self.__field = deepcopy(field_copy)
+        else:
+            self.__o_rez += self.__field.black_checkers_count - self.__field.white_checkers_count
+            self.__k_rez += 1
+
+        # if moves_list:
+        #     k_pole=deepcopy(pole)#копируем поле
+        #     for ((poz1_x,poz1_y),(poz2_x,poz2_y)) in moves_list:#проходим все ходы по списку
+        #         t_spisok=hod(0,poz1_x,poz1_y,poz2_x,poz2_y)
+        #         if t_spisok:#если существует ещё ход
+        #             proverka_hk(current_prediction_depth,(n_moves+((poz1_x,poz1_y),)),t_spisok)
+        #         else:
+        #             proverka_hi(current_prediction_depth,[])
+        #             if current_prediction_depth==1:
+        #                 t_rez=o_rez/k_rez
+        #                 if not(n2_spisok):#записыаем если пустой
+        #                     n2_spisok=(n_moves+((poz1_x,poz1_y),(poz2_x,poz2_y)),)
+        #                     l_rez=t_rez#сохряняем наилучший результат
+        #                 else:
+        #                     if t_rez==l_rez:
+        #                         n2_spisok=n2_spisok+(n_moves+((poz1_x,poz1_y),(poz2_x,poz2_y)),)
+        #                     if t_rez>l_rez:
+        #                         n2_spisok=()
+        #                         n2_spisok=(n_moves+((poz1_x,poz1_y),(poz2_x,poz2_y)),)
+        #                         l_rez=t_rez#сохряняем наилучший результат
+        #                 o_rez=0
+        #                 k_rez=0
+
+        #         pole=deepcopy(k_pole)#возвращаем поле
+        # else:#???
+        #     s_k,s_i=skan()#подсчёт результата хода
+        #     o_rez+=(s_k-s_i)
+        #     k_rez+=1
+
+    def proverka_hi(self, current_prediction_depth: int, moves_list: list[Move]):
+        if not(moves_list):
+            moves_list = self.__get_moves_list(SideType.WHITE)
+
+        if (moves_list):
+            field_copy = deepcopy(self.__field)
+
+            for move in moves_list:
+                self.__handle_move(move, draw=False)
+                required_moves_list = self.__get_required_moves_list(SideType.WHITE)
+                if (required_moves_list):
+                    self.proverka_hi(current_prediction_depth, required_moves_list)
+                else:
+                    if (current_prediction_depth < MAX_PREDICTION_DEPTH):
+                        self.proverka_hk(current_prediction_depth + 1, [], [])
+                    else:
+                        self.__o_rez += self.__field.black_checkers_count - self.__field.white_checkers_count
+                        self.__k_rez += 1
+
+                self.__field = deepcopy(field_copy)
+        else:
+            self.__o_rez += self.__field.black_checkers_count - self.__field.white_checkers_count
+            self.__k_rez += 1
+
+        # if moves_list:#проверяем наличие доступных ходов
+        #     k_pole=deepcopy(pole)#копируем поле
+        #     for ((poz1_x,poz1_y),(poz2_x,poz2_y)) in moves_list:
+        #         t_spisok=hod(0,poz1_x,poz1_y,poz2_x,poz2_y)
+        #         if t_spisok:#если существует ещё ход
+        #             proverka_hi(current_prediction_depth,t_spisok)
+        #         else:
+        #             if current_prediction_depth<ur:
+        #                 proverka_hk(current_prediction_depth+1,(),[])
+        #             else:
+        #                 s_k,s_i=skan()#подсчёт результата хода
+        #                 o_rez+=(s_k-s_i)
+        #                 k_rez+=1
+
+        #         pole=deepcopy(k_pole)#возвращаем поле
+        # else:#доступных ходов нет
+        #     s_k,s_i=skan()#подсчёт результата хода
+        #     o_rez+=(s_k-s_i)
+        #     k_rez+=1
+        
+
     def __get_moves_list(self, side: SideType) -> list[Move]:
         '''Получение списка ходов для выбранной стороны'''
         moves_list = self.__get_required_moves_list(side)
@@ -219,7 +361,7 @@ class Game:
                 # Для обычной шашки
                 if (self.__field.type_at(x, y) == friendly_checkers[0]):
                     for offset in MOVE_OFFSETS:
-                        if not (self.__field.is_within(Point(x + offset.x * 2, y + offset.y * 2))): continue
+                        if not (self.__field.is_within(x + offset.x * 2, y + offset.y * 2)): continue
 
                         if self.__field.type_at(x + offset.x, y + offset.y) in enemy_checkers and self.__field.type_at(x + offset.x * 2, y + offset.y * 2) == CheckerType.NONE:
                             moves_list.append(Move(x, y, x + offset.x * 2, y + offset.y * 2))
@@ -227,12 +369,12 @@ class Game:
                 # Для дамки
                 elif (self.__field.type_at(x, y) == friendly_checkers[1]):
                     for offset in MOVE_OFFSETS:
-                        if not (self.__field.is_within(Point(x + offset.x * 2, y + offset.y * 2))): continue
+                        if not (self.__field.is_within(x + offset.x * 2, y + offset.y * 2)): continue
 
                         has_enemy_checker_on_way = False
 
                         for shift in range(1, self.__field.size):
-                            if not (self.__field.is_within(Point(x + offset.x * shift, y + offset.y * shift))): continue
+                            if not (self.__field.is_within(x + offset.x * shift, y + offset.y * shift)): continue
 
                             # Если на пути не было вражеской шашки
                             if (not has_enemy_checker_on_way):
@@ -268,7 +410,7 @@ class Game:
                 # Для обычной шашки
                 if (self.__field.type_at(x, y) == friendly_checkers[0]):
                     for offset in MOVE_OFFSETS[:2] if side == SideType.WHITE else MOVE_OFFSETS[2:]:
-                        if not (self.__field.is_within(Point(x + offset.x, y + offset.y))): continue
+                        if not (self.__field.is_within(x + offset.x, y + offset.y)): continue
 
                         if (self.__field.type_at(x + offset.x, y + offset.y) == CheckerType.NONE):
                             moves_list.append(Move(x, y, x + offset.x, y + offset.y))
@@ -276,10 +418,10 @@ class Game:
                 # Для дамки
                 elif (self.__field.type_at(x, y) == friendly_checkers[1]):
                     for offset in MOVE_OFFSETS:
-                        if not (self.__field.is_within(Point(x + offset.x * 2, y + offset.y * 2))): continue
+                        if not (self.__field.is_within(x + offset.x * 2, y + offset.y * 2)): continue
 
                         for shift in range(1, self.__field.size):
-                            if not (self.__field.is_within(Point(x + offset.x * shift, y + offset.y * shift))): continue
+                            if not (self.__field.is_within(x + offset.x * shift, y + offset.y * shift)): continue
 
                             if (self.__field.type_at(x + offset.x * shift, y + offset.y * shift) == CheckerType.NONE):
                                 moves_list.append(Move(x, y, x + offset.x * shift, y + offset.y * shift))
