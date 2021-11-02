@@ -1,32 +1,58 @@
 # Игра Шашки на Python
 ## Скриншот
-![Gameplay screenshot](https://github.com/Kicshikxo/Python-checkers/blob/master/screenshot.png?raw=true)
+
+<p align="center">
+  <img src="https://github.com/Kicshikxo/Python-checkers/blob/master/screenshot.png?raw=true" alt="Gameplay screenshot"/>
+</p>
+
 ## Описание проекта
 Игра Шашки, написанная на Python с использованием графической библиотеки Tkinter.  
-В игре присутствует экспертная система, представленная алгоритмом для нахождения оптимального хода у чёрных шашек, против которой и надо играть
+В игре присутствует экспертная система, представленная алгоритмом для нахождения оптимального хода у чёрных шашек, против которых и надо играть
+
+## Используемые библиотеки
+- Tkinter - Графическая библиотека
+- Pillow (PIL) - Библиотека для работы с растровой графикой (используется для изменения размера изображений шашек)
+
+---
+
+>Предупреждение: Дальнейшая информация предназначена для разработки или для лучшего понимания кода
+
 ## Описание констант в файле checkers/constants.py
 - X_SIZE и Y_SIZE - Определяют ширину и высоту поля в ячейках
 - CELL_SIZE - Определяет размер одной ячейки поля (в пикселях)
 - ANIMATION_SPEED - Определяет скорость анимации перемещения шашек (больше = быстрее)
 - MAX_PREDICTION_DEPTH - Определяет то, сколько следующих ходов экспретная система будет обрабатывать
 - BORDER_WIDTH - Определяет ширину рамки обвода ячейки при наведении или выделении (должно быть чётным числом)
-- Цвета:
+- <details><summary>Цвета</summary>
+
   - FIELD_COLORS - Определяет два цвета для ячеек сетки игрового поля
   - HOVER_BORDER_COLOR - Определяет цвет обводки ячейки при наведении на неё
   - SELECT_BORDER_COLOR - Определяет цвет обводки ячейки при выделении стоящей на ней шашки
   - POSIBLE_MOVE_CIRCLE_COLOR - Определяет цвет кружков, которые появляются на месте возможных ходов выбранной шашки
+
+</details>
+
 ## Описание перечислений (enums) в файле checkers/enums.py
-- SideType - Тип стороны игры:
+- <details><summary>SideType - Тип стороны игры</summary>
+
   - WHITE - Сторона белых
   - BLACK - Сторона чёрных
-- CheckerType - Тип шашки:
+
+</details>
+
+- <details><summary>CheckerType - Тип шашки</summary>
+
   - NONE - Отсутствие типа (ячейка без шашки)
   - WHITE_REGULAR - Белая шашка
   - WHITE_QUEEN - Белая дамка
   - BLACK_REGULAR - Чёрная шашка
   - BLACK_QUEEN - Чёрная дамка
+
+</details>
+
 ## Описание полей и методов классов
-<details><summary>Field (checkers/field.py) - Класс поля</summary>
+
+- <details><summary>Field (checkers/field.py) - Класс поля</summary>
 
   - Поля
     - x_size - Ширина поля
@@ -41,7 +67,7 @@
 
 </details>
 
-<details><summary>Checker (checkers/ckecker.py) - Класс шашки</summary>
+- <details><summary>Checker (checkers/ckecker.py) - Класс шашки</summary>
 
   - Поля
     - x - Положение на поле по оси X
@@ -52,7 +78,7 @@
 
 </details>
 
-<details><summary>Move (checkers/move.py) - Класс перемещения</summary>
+- <details><summary>Move (checkers/move.py) - Класс перемещения</summary>
 
   - Поля
     - from_x - Координата начальной точки перемещения по оси X
@@ -62,14 +88,10 @@
 
 </details>
 
-<details><summary>Point (checkers/point.py) - Класс точки на поле</summary>
+- <details><summary>Point (checkers/point.py) - Класс точки на поле</summary>
 
   - Поля
     - x - Положение на поле по оси X
     - y - Положение на поле по оси Y
 
 </details>
-
-## Используемые библиотеки
-- Tkinter - Графическая библиотека
-- Pillow (PIL) - Библиотека для работы с растровой графикой (используется для изменения размера изображений шашек)
