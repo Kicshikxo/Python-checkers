@@ -109,7 +109,7 @@ class Game:
         x, y = (event.x) // CELL_SIZE, (event.y) // CELL_SIZE
 
         # Если точка не внутри поля
-        if not (self.__field.is_within(Point(x, y))): return
+        if not (self.__field.is_within(x, y)): return
 
         # Если нажатие по белой шашке, то выбрать её
         if (self.__field.type_at(x, y) in WHITE_CHECKERS):
