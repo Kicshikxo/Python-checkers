@@ -19,5 +19,5 @@ class Checker:
         return self.__type
 
     def change_type(self, type: CheckerType):
-        '''Изменение типа шишки'''
+        '''Изменение типа шашки'''
         self.__type = type
