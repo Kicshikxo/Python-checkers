@@ -22,10 +22,10 @@ class Move:
         return self.__to_y
 
     def __str__(self):
-        return f'{self.from_x}, {self.from_y} -> {self.to_x} {self.to_y}'
+        return f'{self.from_x}-{self.from_y} -> {self.to_x}-{self.to_y}'
 
     def __repr__(self):
-        return f'{self.from_x}, {self.from_y} -> {self.to_x} {self.to_y}'
+        return f'{self.from_x}-{self.from_y} -> {self.to_x}-{self.to_y}'
 
     def __eq__(self, other):
         if isinstance(other, Move):
