@@ -1,6 +1,6 @@
 >Предупреждение: Дальнейшая информация предназначена для разработки или для лучшего понимания кода
 
-## Описание констант в файле checkers/constants.py
+## Описание констант в файле constants.py
 - X_SIZE и Y_SIZE - Определяют ширину и высоту поля в ячейках
 - CELL_SIZE - Определяет размер одной ячейки поля (в пикселях)
 - ANIMATION_SPEED - Определяет скорость анимации перемещения шашек (больше = быстрее)
@@ -15,7 +15,7 @@
 
 </details>
 
-## Описание перечислений (enums) в файле checkers/enums.py
+## Описание перечислений (enums) в файле enums.py
 - <details><summary>SideType - Тип стороны игры</summary>
 
   - WHITE - Сторона белых
@@ -35,7 +35,7 @@
 
 ## Описание полей и методов классов
 
-- <details><summary>Field (checkers/field.py) - Класс поля</summary>
+- <details><summary>Field (field.py) - Класс поля</summary>
 
   - Поля
     - x_size - Ширина поля
@@ -50,7 +50,7 @@
 
 </details>
 
-- <details><summary>Checker (checkers/ckecker.py) - Класс шашки</summary>
+- <details><summary>Checker (ckecker.py) - Класс шашки</summary>
 
   - Поля
     - type - Тип шашки
@@ -59,7 +59,7 @@
 
 </details>
 
-- <details><summary>Move (checkers/move.py) - Класс перемещения</summary>
+- <details><summary>Move (move.py) - Класс перемещения</summary>
 
   - Поля
     - from_x - Координата начальной точки перемещения по оси X
@@ -69,7 +69,7 @@
 
 </details>
 
-- <details><summary>Point (checkers/point.py) - Класс точки на поле</summary>
+- <details><summary>Point (point.py) - Класс точки на поле</summary>
 
   - Поля
     - x - Положение на поле по оси X
