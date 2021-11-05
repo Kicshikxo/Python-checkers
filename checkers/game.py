@@ -231,8 +231,6 @@ class Game:
 
                 self.__field = Field.copy(field_copy)
 
-        print(best_result)
-
         optimal_move = []
         if (optimal_moves):
             # Фильтрация хода
