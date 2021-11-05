@@ -29,7 +29,7 @@
   - WHITE_REGULAR - Белая шашка
   - WHITE_QUEEN - Белая дамка
   - BLACK_REGULAR - Чёрная шашка
-  - BLACK_QUEEN - Чёрная дамка
+  - BLACK_QUEEN - Чёрная дамка 
 
 </details>
 
