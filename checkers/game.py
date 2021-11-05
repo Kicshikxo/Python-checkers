@@ -1,8 +1,8 @@
 from tkinter import Canvas, Event, messagebox
 from PIL import Image, ImageTk
+from random import choice
 from pathlib import Path
 from time import sleep
-from random import choice
 from math import inf
 
 from checkers.field import Field
@@ -206,32 +206,33 @@ class Game:
         '''Предсказать оптимальный ход'''
         best_result = 0
         optimal_moves = []
-        all_moves_list = self.__get_predicted_moves_list(side)
+        predicted_moves_list = self.__get_predicted_moves_list(side)
 
-        field_copy = Field.copy(self.__field)
-        for moves in all_moves_list:
-            for move in moves:
-                self.__handle_move(move, draw=False)
+        if (predicted_moves_list):
+            field_copy = Field.copy(self.__field)
+            for moves in predicted_moves_list:
+                for move in moves:
+                    self.__handle_move(move, draw=False)
 
-            if (side == SideType.WHITE):
-                try:
-                    result = self.__field.white_checkers_count / self.__field.black_checkers_count
-                except ZeroDivisionError:
-                    result = inf
-            elif (side == SideType.BLACK):
-                try:
-                    result = self.__field.black_checkers_count / self.__field.white_checkers_count
-                except ZeroDivisionError:
-                    result = inf
-            
-            if (result > best_result):
-                best_result = result
-                optimal_moves.clear()
-                optimal_moves.append(moves)
-            elif (result == best_result):
-                optimal_moves.append(moves)
+                if (side == SideType.WHITE):
+                    try:
+                        result = self.__field.white_checkers_count / self.__field.black_checkers_count
+                    except ZeroDivisionError:
+                        result = inf
+                elif (side == SideType.BLACK):
+                    try:
+                        result = self.__field.black_checkers_count / self.__field.white_checkers_count
+                    except ZeroDivisionError:
+                        result = inf
+                
+                if (result > best_result):
+                    best_result = result
+                    optimal_moves.clear()
+                    optimal_moves.append(moves)
+                elif (result == best_result):
+                    optimal_moves.append(moves)
 
-            self.__field = Field.copy(field_copy)
+                self.__field = Field.copy(field_copy)
 
         optimal_move = []
         if (optimal_moves):
