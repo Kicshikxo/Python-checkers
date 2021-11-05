@@ -3,14 +3,12 @@ from PIL import Image, ImageTk
 from pathlib import Path
 from time import sleep
 from random import choice
-from copy import deepcopy
+from math import inf
 
 from checkers.field import Field
 from checkers.move import Move
 from checkers.constants import *
 from checkers.enums import CheckerType, SideType
-
-# TODO Может продолжится ход если пешка съела, но отрывается ход для другой, и можно походить ей
 
 class Game:
     def __init__(self, canvas: Canvas, x_field_size: int, y_field_size: int):
@@ -120,6 +118,8 @@ class Game:
             # Если нажатие по ячейке, на которую можно походить
             if (move in self.__get_moves_list(SideType.WHITE)):
                 self.__handle_white_turn(move)
+
+                # Если не ход игрока, то ход чёрных
                 if not (self.__player_turn):
                     self.__handle_black_turn()
 
@@ -159,45 +159,51 @@ class Game:
         '''Обработка хода белых (игрока)'''
         self.__player_turn = False
 
-        # Сохранение изначального типа пешки
-        original_type = self.__field.type_at(self.__selected_cell.x, self.__selected_cell.y)
-
         moves_list = self.__get_moves_list(SideType.WHITE)
         if (move in moves_list):
             # Была ли убита шашка
             has_killed_checker = self.__handle_move(move)
 
-            # Если тип пешки не изменился, и была убила шашка, то ход не окончен
-            if (self.__field.type_at(move.to_x, move.to_y) == original_type and has_killed_checker):
-                required_moves_list = self.__get_required_moves_list(SideType.WHITE)
-                for required_move in required_moves_list:
-                    # Если у текущей пешки ещё есть обязательные ходы, то продолжить ход
-                    if (move.to_x == required_move.from_x and move.to_y == required_move.from_y):
-                        self.__player_turn = True
-                        break
+            required_moves_list = list(filter(lambda required_move: move.to_x == required_move.from_x and move.to_y == required_move.from_y, self.__get_required_moves_list(SideType.WHITE)))
+            
+            # Если есть ещё ход этой же шашкой
+            if (has_killed_checker and required_moves_list):
+                self.__player_turn = True
 
         self.__selected_cell = Point()
 
     def __handle_black_turn(self):
         '''Обработка хода чёрных (компьютера)'''
         moves_list = self.__predict_optimal_move(SideType.BLACK)
-        # print(moves_list)
-        # print(self.__get_moves_list(SideType.BLACK))
-        self.__draw()
 
         if (moves_list):
             for move in moves_list:
                 self.__handle_move(move)
                 
             self.__player_turn = True
-        else:
-            messagebox.showinfo('Победа', 'Вы выиграли')
+        
+        self.__check_for_game_over()
 
-            # Новая игра
+    def __check_for_game_over(self):
+        game_over = False
+        
+        white_moves_list = self.__get_moves_list(SideType.WHITE)
+        if not (white_moves_list):
+            # Белые проиграли
+            answer = messagebox.showinfo('Конец игры', 'Чёрные выиграли')
+            game_over = True
+
+        black_moves_list = self.__get_moves_list(SideType.BLACK)
+        if not (black_moves_list):
+            # Чёрные проиграли
+            answer = messagebox.showinfo('Конец игры', 'Белые выиграли')
+            game_over = True
+        
+        if (game_over):
             self.__init__(self.__canvas, self.__field.x_size, self.__field.y_size)
 
     def __predict_optimal_move(self, side: SideType) -> list[Move]:
-        '''Найти оптимальных ход'''
+        '''Предсказать оптимальный ход'''
         optimal_moves = []
         best_result = 0
         all_moves_list = self.__get_predicted_moves_list(side)
@@ -208,22 +214,32 @@ class Game:
                 self.__handle_move(move, draw=False)
 
             if (side == SideType.WHITE):
-                result = self.__field.white_checkers_count / self.__field.black_checkers_count
+                try:
+                    result = self.__field.white_checkers_count / self.__field.black_checkers_count
+                except ZeroDivisionError:
+                    result = inf
             elif (side == SideType.BLACK):
-                result = self.__field.black_checkers_count / self.__field.white_checkers_count
-
+                try:
+                    result = self.__field.black_checkers_count / self.__field.white_checkers_count
+                except ZeroDivisionError:
+                    result = inf
+            
             if (result > best_result):
                 best_result = result
-                optimal_moves = moves
+                optimal_moves.clear()
+                optimal_moves.append(moves)
+            elif (result == best_result):
+                optimal_moves.append(moves)
 
             self.__field = Field.copy(field_copy)
 
         optimal_move = []
-        for move in optimal_moves:
-            if   (side == SideType.WHITE and self.__field.type_at(move.from_x, move.from_y) in BLACK_CHECKERS): break
-            elif (side == SideType.BLACK and self.__field.type_at(move.from_x, move.from_y) in WHITE_CHECKERS): break
+        if (optimal_moves):
+            for move in choice(optimal_moves):
+                if   (side == SideType.WHITE and self.__field.type_at(move.from_x, move.from_y) in BLACK_CHECKERS): break
+                elif (side == SideType.BLACK and self.__field.type_at(move.from_x, move.from_y) in WHITE_CHECKERS): break
 
-            optimal_move.append(move)
+                optimal_move.append(move)
 
         return optimal_move
 
@@ -245,7 +261,7 @@ class Game:
 
                 required_moves_list = list(filter(lambda required_move: move.to_x == required_move.from_x and move.to_y == required_move.from_y, self.__get_required_moves_list(side)))
 
-                # Если есть ход этой же шашкой
+                # Если есть ещё ход этой же шашкой
                 if (has_killed_checker and required_moves_list):
                     self.__get_predicted_moves_list(side, current_prediction_depth, all_moves_list, saved_moves_list + [move], required_moves_list)
                 else:
@@ -256,14 +272,14 @@ class Game:
         return all_moves_list
 
     def __get_moves_list(self, side: SideType) -> list[Move]:
-        '''Получение списка ходов для выбранной стороны'''
+        '''Получение списка ходов'''
         moves_list = self.__get_required_moves_list(side)
         if not (moves_list):
             moves_list = self.__get_optional_moves_list(side)
         return moves_list
 
     def __get_required_moves_list(self, side: SideType) -> list[Move]:
-        '''Получение списка обязательных ходов для выбранной стороны'''
+        '''Получение списка обязательных ходов'''
         moves_list = []
 
         # Определение типов шашек
@@ -315,7 +331,7 @@ class Game:
         return moves_list
 
     def __get_optional_moves_list(self, side: SideType) -> list[Move]:
-        '''Получение списка всех ходов для выбранной стороны'''
+        '''Получение списка необязательных ходов'''
         moves_list = []
 
         # Определение типов шашек
