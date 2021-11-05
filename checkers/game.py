@@ -176,17 +176,17 @@ class Game:
         '''Обработка хода чёрных (компьютера)'''
         moves_list = self.__predict_optimal_move(SideType.BLACK)
 
-        if (moves_list):
-            for move in moves_list:
-                self.__handle_move(move)
-                
-            self.__player_turn = True
+        for move in moves_list:
+            self.__handle_move(move)
+            
+        self.__player_turn = True
         
         self.__check_for_game_over()
 
     def __check_for_game_over(self):
+        '''Проверка на конец игры'''
         game_over = False
-        
+
         white_moves_list = self.__get_moves_list(SideType.WHITE)
         if not (white_moves_list):
             # Белые проиграли
@@ -204,8 +204,8 @@ class Game:
 
     def __predict_optimal_move(self, side: SideType) -> list[Move]:
         '''Предсказать оптимальный ход'''
-        optimal_moves = []
         best_result = 0
+        optimal_moves = []
         all_moves_list = self.__get_predicted_moves_list(side)
 
         field_copy = Field.copy(self.__field)
