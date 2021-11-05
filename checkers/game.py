@@ -242,7 +242,7 @@ class Game:
 
         return optimal_move
 
-    def __get_predicted_moves_list(self, side: SideType, current_prediction_depth: int = 0, all_moves_list: list[Move] = [], current_moves_list: list[Move] = [], moves_list: list[Move] = []) -> list[Move]:
+    def __get_predicted_moves_list(self, side: SideType, current_prediction_depth: int = 0, all_moves_list: list[Move] = [], current_moves_list: list[Move] = [], required_moves_list: list[Move] = []) -> list[Move]:
         '''Предсказать все возможные ходы'''
 
         if (current_moves_list):
@@ -250,7 +250,9 @@ class Game:
         else:
             all_moves_list.clear()
 
-        if not (moves_list):
+        if (required_moves_list):
+            moves_list = required_moves_list
+        else:
             moves_list = self.__get_moves_list(side)
 
         if (moves_list and current_prediction_depth < MAX_PREDICTION_DEPTH):
