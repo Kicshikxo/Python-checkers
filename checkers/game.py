@@ -19,9 +19,6 @@ class Game:
 
         self.__player_turn = True
 
-        self.__required_white_moves_list = []
-        self.__required_black_moves_list = []
-
         self.__hovered_cell = Point()
         self.__selected_cell = Point()
         self.__animated_cell = Point()
@@ -106,7 +103,7 @@ class Game:
 
     def mouse_down(self, event: Event):
         '''Событие нажатия мышки'''
-        if (not self.__player_turn): return
+        if not (self.__player_turn): return
 
         x, y = (event.x) // CELL_SIZE, (event.y) // CELL_SIZE
 
@@ -184,16 +181,80 @@ class Game:
 
     def __handle_black_turn(self):
         '''Обработка хода чёрных (компьютера)'''
-        moves_list = self.__get_moves_list(SideType.BLACK)
+        moves_list = self.__get_optimal_moves(SideType.BLACK)
+        # print(moves_list)
+        # print(self.__get_moves_list(SideType.BLACK))
+        self.__draw()
 
         if (moves_list):
-            self.__handle_move(choice(moves_list))
+            for move in moves_list:
+                self.__handle_move(move)
+                
             self.__player_turn = True
         else:
             messagebox.showinfo('Победа', 'Вы выиграли')
 
             # Новая игра
             self.__init__(self.__canvas, self.__field.x_size, self.__field.y_size)
+
+    def __get_optimal_moves(self, side: SideType) -> list[Move]:
+        '''Найти оптимальных ход'''
+        optimal_moves = []
+        best_result = 0
+        all_moves_list = self.__get_all_moves_list(side)
+
+        field_copy = Field.copy(self.__field)
+        for moves in all_moves_list:
+            for move in moves:
+                self.__handle_move(move, draw=False)
+
+            if (side == SideType.WHITE):
+                result = self.__field.white_checkers_count / self.__field.black_checkers_count
+            elif (side == SideType.BLACK):
+                result = self.__field.black_checkers_count / self.__field.white_checkers_count
+
+            if (result > best_result):
+                best_result = result
+                optimal_moves = moves
+
+            self.__field = Field.copy(field_copy)
+
+        optimal_move = []
+        for move in optimal_moves:
+            if   (side == SideType.WHITE and self.__field.type_at(move.from_x, move.from_y) in BLACK_CHECKERS): break
+            elif (side == SideType.BLACK and self.__field.type_at(move.from_x, move.from_y) in WHITE_CHECKERS): break
+
+            optimal_move.append(move)
+
+        return optimal_move
+
+    def __get_all_moves_list(self, side: SideType, current_prediction_depth: int = 0, all_moves_list: list[Move] = [], saved_moves_list: list[Move] = [], moves_list: list[Move] = []) -> list[Move]:
+        '''Нахождение всех возможных ходов'''
+
+        if (saved_moves_list):
+            all_moves_list.append(saved_moves_list)
+        else:
+            all_moves_list.clear()
+
+        if not (moves_list):
+            moves_list = self.__get_moves_list(side)
+
+        if (moves_list and current_prediction_depth < MAX_PREDICTION_DEPTH):
+            field_copy = Field.copy(self.__field)
+            for move in moves_list:
+                has_killed_checker = self.__handle_move(move, draw=False)
+
+                required_moves_list = list(filter(lambda required_move: move.to_x == required_move.from_x and move.to_y == required_move.from_y, self.__get_required_moves_list(side)))
+
+                # Если есть ход этой же шашкой
+                if (has_killed_checker and required_moves_list):
+                    self.__get_all_moves_list(side, current_prediction_depth, all_moves_list, saved_moves_list + [move], required_moves_list)
+                else:
+                    self.__get_all_moves_list(SideType.WHITE if side == SideType.BLACK else SideType.BLACK, current_prediction_depth + 1, all_moves_list, saved_moves_list + [move])
+
+                self.__field = Field.copy(field_copy)
+
+        return all_moves_list
 
     def __get_moves_list(self, side: SideType) -> list[Move]:
         '''Получение списка ходов для выбранной стороны'''
