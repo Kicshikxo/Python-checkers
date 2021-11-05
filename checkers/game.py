@@ -215,15 +215,12 @@ class Game:
                 for move in moves:
                     self.__handle_move(move, draw=False)
 
-                if (side == SideType.WHITE):
-                    try:
+                try:
+                    if (side == SideType.WHITE):
                         result = self.__field.white_checkers_count / self.__field.black_checkers_count
-                    except ZeroDivisionError:
-                        result = inf
-                elif (side == SideType.BLACK):
-                    try:
+                    elif (side == SideType.BLACK):
                         result = self.__field.black_checkers_count / self.__field.white_checkers_count
-                    except ZeroDivisionError:
+                except ZeroDivisionError:
                         result = inf
                 
                 if (result > best_result):
@@ -237,6 +234,7 @@ class Game:
 
         optimal_move = []
         if (optimal_moves):
+            # Фильтрация хода
             for move in choice(optimal_moves):
                 if   (side == SideType.WHITE and self.__field.type_at(move.from_x, move.from_y) in BLACK_CHECKERS): break
                 elif (side == SideType.BLACK and self.__field.type_at(move.from_x, move.from_y) in WHITE_CHECKERS): break
