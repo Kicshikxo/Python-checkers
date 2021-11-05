@@ -216,9 +216,9 @@ class Game:
 
                 try:
                     if (side == SideType.WHITE):
-                        result = (self.__field.white_checkers_count + self.__field.count_checkers_by_type(CheckerType.WHITE_QUEEN) * 2) / (self.__field.black_checkers_count + self.__field.count_checkers_by_type(CheckerType.BLACK_QUEEN) * 2)
+                        result = self.__field.white_score / self.__field.black_score
                     elif (side == SideType.BLACK):
-                        result = (self.__field.black_checkers_count + self.__field.count_checkers_by_type(CheckerType.BLACK_QUEEN) * 2) / (self.__field.white_checkers_count + self.__field.count_checkers_by_type(CheckerType.WHITE_QUEEN) * 2)
+                        result = self.__field.black_score / self.__field.white_score
                 except ZeroDivisionError:
                         result = inf
                 
