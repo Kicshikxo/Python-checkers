@@ -1,7 +1,7 @@
 from tkinter import Canvas, Event, messagebox
 from PIL import Image, ImageTk
 from pathlib import Path
-from time import sleep, time
+from time import sleep
 from random import choice
 from copy import deepcopy
 
@@ -120,7 +120,6 @@ class Game:
             # Если нажатие по ячейке, на которую можно походить
             if (move in self.__get_moves_list(SideType.WHITE)):
                 self.__handle_white_turn(move)
-
                 if not (self.__player_turn):
                     self.__handle_black_turn()
 
@@ -181,7 +180,7 @@ class Game:
 
     def __handle_black_turn(self):
         '''Обработка хода чёрных (компьютера)'''
-        moves_list = self.__get_optimal_moves(SideType.BLACK)
+        moves_list = self.__predict_optimal_move(SideType.BLACK)
         # print(moves_list)
         # print(self.__get_moves_list(SideType.BLACK))
         self.__draw()
@@ -197,11 +196,11 @@ class Game:
             # Новая игра
             self.__init__(self.__canvas, self.__field.x_size, self.__field.y_size)
 
-    def __get_optimal_moves(self, side: SideType) -> list[Move]:
+    def __predict_optimal_move(self, side: SideType) -> list[Move]:
         '''Найти оптимальных ход'''
         optimal_moves = []
         best_result = 0
-        all_moves_list = self.__get_all_moves_list(side)
+        all_moves_list = self.__get_predicted_moves_list(side)
 
         field_copy = Field.copy(self.__field)
         for moves in all_moves_list:
@@ -228,8 +227,8 @@ class Game:
 
         return optimal_move
 
-    def __get_all_moves_list(self, side: SideType, current_prediction_depth: int = 0, all_moves_list: list[Move] = [], saved_moves_list: list[Move] = [], moves_list: list[Move] = []) -> list[Move]:
-        '''Нахождение всех возможных ходов'''
+    def __get_predicted_moves_list(self, side: SideType, current_prediction_depth: int = 0, all_moves_list: list[Move] = [], saved_moves_list: list[Move] = [], moves_list: list[Move] = []) -> list[Move]:
+        '''Предсказать все возможные ходы'''
 
         if (saved_moves_list):
             all_moves_list.append(saved_moves_list)
@@ -248,9 +247,9 @@ class Game:
 
                 # Если есть ход этой же шашкой
                 if (has_killed_checker and required_moves_list):
-                    self.__get_all_moves_list(side, current_prediction_depth, all_moves_list, saved_moves_list + [move], required_moves_list)
+                    self.__get_predicted_moves_list(side, current_prediction_depth, all_moves_list, saved_moves_list + [move], required_moves_list)
                 else:
-                    self.__get_all_moves_list(SideType.WHITE if side == SideType.BLACK else SideType.BLACK, current_prediction_depth + 1, all_moves_list, saved_moves_list + [move])
+                    self.__get_predicted_moves_list(SideType.opposite(side), current_prediction_depth + 1, all_moves_list, saved_moves_list + [move])
 
                 self.__field = Field.copy(field_copy)
 
