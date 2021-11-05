@@ -355,7 +355,7 @@ class Game:
                 # Для дамки
                 elif (self.__field.type_at(x, y) == friendly_checkers[1]):
                     for offset in MOVE_OFFSETS:
-                        if not (self.__field.is_within(x + offset.x * 2, y + offset.y * 2)): continue
+                        if not (self.__field.is_within(x + offset.x, y + offset.y)): continue
 
                         for shift in range(1, self.__field.size):
                             if not (self.__field.is_within(x + offset.x * shift, y + offset.y * shift)): continue
