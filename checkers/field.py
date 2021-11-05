@@ -61,19 +61,19 @@ class Field:
     @property
     def white_checkers_count(self) -> int:
         '''Количество белых шашек на поле'''
-        return sum([reduce(lambda acc, checker: acc + (checker.type in WHITE_CHECKERS), checkers, 0) for checkers in self.__checkers])
+        return sum(reduce(lambda acc, checker: acc + (checker.type in WHITE_CHECKERS), checkers, 0) for checkers in self.__checkers)
 
     @property
     def black_checkers_count(self) -> int:
         '''Количество чёрных шашек на поле'''
-        return sum([reduce(lambda acc, checker: acc + (checker.type in BLACK_CHECKERS), checkers, 0) for checkers in self.__checkers])
+        return sum(reduce(lambda acc, checker: acc + (checker.type in BLACK_CHECKERS), checkers, 0) for checkers in self.__checkers)
 
     @property
     def white_score(self) -> int:
         '''Счёт белых'''
-        return sum([reduce(lambda acc, checker: acc + (checker.type == CheckerType.WHITE_REGULAR) + (checker.type == CheckerType.WHITE_QUEEN) * 3, checkers, 0) for checkers in self.__checkers])
+        return sum(reduce(lambda acc, checker: acc + (checker.type == CheckerType.WHITE_REGULAR) + (checker.type == CheckerType.WHITE_QUEEN) * 3, checkers, 0) for checkers in self.__checkers)
     
     @property
     def black_score(self) -> int:
         '''Счёт чёрных'''
-        return sum([reduce(lambda acc, checker: acc + (checker.type == CheckerType.BLACK_REGULAR) + (checker.type == CheckerType.BLACK_QUEEN) * 3, checkers, 0) for checkers in self.__checkers])
+        return sum(reduce(lambda acc, checker: acc + (checker.type == CheckerType.BLACK_REGULAR) + (checker.type == CheckerType.BLACK_QUEEN) * 3, checkers, 0) for checkers in self.__checkers)
