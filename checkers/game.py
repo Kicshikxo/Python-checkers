@@ -216,9 +216,9 @@ class Game:
 
                 try:
                     if (side == SideType.WHITE):
-                        result = self.__field.white_checkers_count / self.__field.black_checkers_count
+                        result = (self.__field.white_checkers_count + self.__field.count_checkers_by_type(CheckerType.WHITE_QUEEN) * 2) / (self.__field.black_checkers_count + self.__field.count_checkers_by_type(CheckerType.BLACK_QUEEN) * 2)
                     elif (side == SideType.BLACK):
-                        result = self.__field.black_checkers_count / self.__field.white_checkers_count
+                        result = (self.__field.black_checkers_count + self.__field.count_checkers_by_type(CheckerType.BLACK_QUEEN) * 2) / (self.__field.white_checkers_count + self.__field.count_checkers_by_type(CheckerType.WHITE_QUEEN) * 2)
                 except ZeroDivisionError:
                         result = inf
                 
@@ -230,6 +230,8 @@ class Game:
                     optimal_moves.append(moves)
 
                 self.__field = Field.copy(field_copy)
+
+        print(best_result)
 
         optimal_move = []
         if (optimal_moves):
