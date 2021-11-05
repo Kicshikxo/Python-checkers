@@ -54,6 +54,10 @@ class Field:
         '''Получение шашки на поле по координатам'''
         return self.__checkers[y][x]
 
+    def is_within(self, x: int, y: int) -> bool:
+        '''Определяет лежит ли точка в пределах поля'''
+        return (0 <= x < self.x_size and 0 <= y < self.y_size)
+
     @property
     def white_checkers_count(self) -> int:
         '''Количество белых шашек на поле'''
@@ -64,6 +68,6 @@ class Field:
         '''Количество чёрных шашек на поле'''
         return sum([reduce(lambda acc, checker: acc + (checker.type in BLACK_CHECKERS), checkers, 0) for checkers in self.__checkers])
 
-    def is_within(self, x: int, y: int) -> bool:
-        '''Определяет лежит ли точка в пределах поля'''
-        return (0 <= x < self.x_size and 0 <= y < self.y_size)
+    def count_checkers_by_type(self, type: CheckerType) -> int:
+        '''Количество шашек определённого типа'''
+        return sum([reduce(lambda acc, checker: acc + (checker.type == type), checkers, 0) for checkers in self.__checkers])
