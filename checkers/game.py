@@ -173,7 +173,7 @@ class Game:
 
     def __handle_black_turn(self):
         '''Обработка хода чёрных (компьютера)'''
-        moves_list = self.__predict_optimal_move(SideType.BLACK)
+        moves_list = self.__predict_optimal_moves(SideType.BLACK)
 
         for move in moves_list:
             self.__handle_move(move)
@@ -202,7 +202,7 @@ class Game:
             # Новая игра
             self.__init__(self.__canvas, self.__field.x_size, self.__field.y_size)
 
-    def __predict_optimal_move(self, side: SideType) -> list[Move]:
+    def __predict_optimal_moves(self, side: SideType) -> list[Move]:
         '''Предсказать оптимальный ход'''
         best_result = 0
         optimal_moves = []
