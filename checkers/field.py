@@ -23,6 +23,17 @@ class Field:
     def size(self) -> int:
         return max(self.x_size, self.y_size)
 
+    @classmethod
+    def copy(cls, field_instance):
+        '''Создаёт копию поля из образца'''
+        field_copy = cls(field_instance.x_size, field_instance.y_size)
+
+        for y in range(field_instance.y_size):
+            for x in range(field_instance.x_size):
+                field_copy.at(x, y).change_type(field_instance.type_at(x, y))
+
+        return field_copy
+
     def __generate(self):
         '''Генерация поля с шашками'''
         self.__checkers = [[Checker() for x in range(self.x_size)] for y in range(self.y_size)]
