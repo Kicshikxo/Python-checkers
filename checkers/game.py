@@ -90,7 +90,6 @@ class Game:
 
     def mouse_move(self, event: Event):
         '''Событие перемещения мышки'''
-
         x, y = (event.x) // CELL_SIZE, (event.y) // CELL_SIZE
         if (x != self.__hovered_cell.x or y != self.__hovered_cell.y):
             self.__hovered_cell = Point(x, y)
@@ -141,7 +140,7 @@ class Game:
         dx = -1 if move.from_x < move.to_x else 1
         dy = -1 if move.from_y < move.to_y else 1
 
-        # Удаление съеденной ячейки
+        # Удаление съеденных шашек
         has_killed_checker = False
         x, y = move.to_x, move.to_y
         while (x != move.from_x or y != move.from_y):
