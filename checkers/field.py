@@ -71,9 +71,9 @@ class Field:
     @property
     def white_score(self) -> int:
         '''Счёт белых'''
-        return sum([reduce(lambda acc, checker: acc + (checker.type == WHITE_CHECKERS[0]) + (checker.type == WHITE_CHECKERS[1]) * 3, checkers, 0) for checkers in self.__checkers])
+        return sum([reduce(lambda acc, checker: acc + (checker.type == CheckerType.WHITE_REGULAR) + (checker.type == CheckerType.WHITE_QUEEN) * 3, checkers, 0) for checkers in self.__checkers])
     
     @property
     def black_score(self) -> int:
         '''Счёт чёрных'''
-        return sum([reduce(lambda acc, checker: acc + (checker.type == BLACK_CHECKERS[0]) + (checker.type == BLACK_CHECKERS[1]) * 3, checkers, 0) for checkers in self.__checkers])
+        return sum([reduce(lambda acc, checker: acc + (checker.type == CheckerType.BLACK_REGULAR) + (checker.type == CheckerType.BLACK_QUEEN) * 3, checkers, 0) for checkers in self.__checkers])
