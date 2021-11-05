@@ -200,6 +200,7 @@ class Game:
             game_over = True
         
         if (game_over):
+            # Новая игра
             self.__init__(self.__canvas, self.__field.x_size, self.__field.y_size)
 
     def __predict_optimal_move(self, side: SideType) -> list[Move]:
