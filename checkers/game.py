@@ -242,11 +242,11 @@ class Game:
 
         return optimal_move
 
-    def __get_predicted_moves_list(self, side: SideType, current_prediction_depth: int = 0, all_moves_list: list[Move] = [], saved_moves_list: list[Move] = [], moves_list: list[Move] = []) -> list[Move]:
+    def __get_predicted_moves_list(self, side: SideType, current_prediction_depth: int = 0, all_moves_list: list[Move] = [], current_moves_list: list[Move] = [], moves_list: list[Move] = []) -> list[Move]:
         '''Предсказать все возможные ходы'''
 
-        if (saved_moves_list):
-            all_moves_list.append(saved_moves_list)
+        if (current_moves_list):
+            all_moves_list.append(current_moves_list)
         else:
             all_moves_list.clear()
 
@@ -262,9 +262,9 @@ class Game:
 
                 # Если есть ещё ход этой же шашкой
                 if (has_killed_checker and required_moves_list):
-                    self.__get_predicted_moves_list(side, current_prediction_depth, all_moves_list, saved_moves_list + [move], required_moves_list)
+                    self.__get_predicted_moves_list(side, current_prediction_depth, all_moves_list, current_moves_list + [move], required_moves_list)
                 else:
-                    self.__get_predicted_moves_list(SideType.opposite(side), current_prediction_depth + 1, all_moves_list, saved_moves_list + [move])
+                    self.__get_predicted_moves_list(SideType.opposite(side), current_prediction_depth + 1, all_moves_list, current_moves_list + [move])
 
                 self.__field = Field.copy(field_copy)
 
