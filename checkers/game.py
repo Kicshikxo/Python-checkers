@@ -25,6 +25,10 @@ class Game:
         
         self.__draw()
 
+        # Если игрок играет за чёрных, то совершить ход противника
+        if (PLAYER_SIDE == SideType.BLACK):
+            self.__handle_enemy_turn()
+
     def __init_images(self):
         '''Инициализация изображений'''
         self.__images = {
@@ -75,7 +79,7 @@ class Game:
 
                 # Отрисовка возможных точек перемещения, если есть выбранная ячейка
                 if (self.__selected_cell):
-                    white_moves_list = self.__get_moves_list(SideType.WHITE)
+                    white_moves_list = self.__get_moves_list(PLAYER_SIDE)
                     for move in white_moves_list:
                         if (self.__selected_cell.x == move.from_x and self.__selected_cell.y == move.from_y):
                             self.__canvas.create_oval(move.to_x * CELL_SIZE + CELL_SIZE / 3, move.to_y * CELL_SIZE + CELL_SIZE / 3, move.to_x * CELL_SIZE + (CELL_SIZE - CELL_SIZE / 3), move.to_y * CELL_SIZE + (CELL_SIZE - CELL_SIZE / 3), fill=POSIBLE_MOVE_CIRCLE_COLOR, width=0, tag='posible_move_circle' )
@@ -107,20 +111,25 @@ class Game:
         # Если точка не внутри поля
         if not (self.__field.is_within(x, y)): return
 
-        # Если нажатие по белой шашке, то выбрать её
-        if (self.__field.type_at(x, y) in WHITE_CHECKERS):
+        if (PLAYER_SIDE == SideType.WHITE):
+            player_checkers = WHITE_CHECKERS
+        elif (PLAYER_SIDE == SideType.BLACK):
+            player_checkers = BLACK_CHECKERS
+
+        # Если нажатие по шашке игрока, то выбрать её
+        if (self.__field.type_at(x, y) in player_checkers):
             self.__selected_cell = Point(x, y)
             self.__draw()
         elif (self.__player_turn):
             move = Move(self.__selected_cell.x, self.__selected_cell.y, x, y)
 
             # Если нажатие по ячейке, на которую можно походить
-            if (move in self.__get_moves_list(SideType.WHITE)):
-                self.__handle_white_turn(move)
+            if (move in self.__get_moves_list(PLAYER_SIDE)):
+                self.__handle_player_turn(move)
 
                 # Если не ход игрока, то ход чёрных
                 if not (self.__player_turn):
-                    self.__handle_black_turn()
+                    self.__handle_enemy_turn()
 
     def __handle_move(self, move: Move, draw: bool = True) -> bool:
         '''Совершение хода'''
@@ -154,26 +163,26 @@ class Game:
 
         return has_killed_checker
 
-    def __handle_white_turn(self, move: Move):
-        '''Обработка хода белых (игрока)'''
+    def __handle_player_turn(self, move: Move):
+        '''Обработка хода игрока'''
         self.__player_turn = False
 
-        moves_list = self.__get_moves_list(SideType.WHITE)
-        if (move in moves_list):
-            # Была ли убита шашка
-            has_killed_checker = self.__handle_move(move)
+        # Была ли убита шашка
+        has_killed_checker = self.__handle_move(move)
 
-            required_moves_list = list(filter(lambda required_move: move.to_x == required_move.from_x and move.to_y == required_move.from_y, self.__get_required_moves_list(SideType.WHITE)))
-            
-            # Если есть ещё ход этой же шашкой
-            if (has_killed_checker and required_moves_list):
-                self.__player_turn = True
+        required_moves_list = list(filter(lambda required_move: move.to_x == required_move.from_x and move.to_y == required_move.from_y, self.__get_required_moves_list(PLAYER_SIDE)))
+        
+        # Если есть ещё ход этой же шашкой
+        if (has_killed_checker and required_moves_list):
+            self.__player_turn = True
 
         self.__selected_cell = Point()
 
-    def __handle_black_turn(self):
-        '''Обработка хода чёрных (компьютера)'''
-        moves_list = self.__predict_optimal_moves(SideType.BLACK)
+    def __handle_enemy_turn(self):
+        '''Обработка хода противника (компьютера)'''
+        self.__player_turn = False
+
+        moves_list = self.__predict_optimal_moves(SideType.opposite(PLAYER_SIDE))
 
         for move in moves_list:
             self.__handle_move(move)
