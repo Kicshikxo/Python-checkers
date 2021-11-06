@@ -9,7 +9,7 @@ class SideType(Enum):
             return SideType.BLACK
         elif (side == SideType.BLACK):
             return SideType.WHITE
-        raise ValueError()
+        else: raise ValueError()
 
 class CheckerType(Enum):
     NONE = auto()
