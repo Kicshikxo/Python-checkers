@@ -79,8 +79,8 @@ class Game:
 
                 # Отрисовка возможных точек перемещения, если есть выбранная ячейка
                 if (self.__selected_cell):
-                    white_moves_list = self.__get_moves_list(PLAYER_SIDE)
-                    for move in white_moves_list:
+                    player_moves_list = self.__get_moves_list(PLAYER_SIDE)
+                    for move in player_moves_list:
                         if (self.__selected_cell.x == move.from_x and self.__selected_cell.y == move.from_y):
                             self.__canvas.create_oval(move.to_x * CELL_SIZE + CELL_SIZE / 3, move.to_y * CELL_SIZE + CELL_SIZE / 3, move.to_x * CELL_SIZE + (CELL_SIZE - CELL_SIZE / 3), move.to_y * CELL_SIZE + (CELL_SIZE - CELL_SIZE / 3), fill=POSIBLE_MOVE_CIRCLE_COLOR, width=0, tag='posible_move_circle' )
 
@@ -115,6 +115,7 @@ class Game:
             player_checkers = WHITE_CHECKERS
         elif (PLAYER_SIDE == SideType.BLACK):
             player_checkers = BLACK_CHECKERS
+        else: return
 
         # Если нажатие по шашке игрока, то выбрать её
         if (self.__field.type_at(x, y) in player_checkers):
@@ -127,7 +128,7 @@ class Game:
             if (move in self.__get_moves_list(PLAYER_SIDE)):
                 self.__handle_player_turn(move)
 
-                # Если не ход игрока, то ход чёрных
+                # Если не ход игрока, то ход противника
                 if not (self.__player_turn):
                     self.__handle_enemy_turn()
 
@@ -182,9 +183,9 @@ class Game:
         '''Обработка хода противника (компьютера)'''
         self.__player_turn = False
 
-        moves_list = self.__predict_optimal_moves(SideType.opposite(PLAYER_SIDE))
+        optimal_moves_list = self.__predict_optimal_moves(SideType.opposite(PLAYER_SIDE))
 
-        for move in moves_list:
+        for move in optimal_moves_list:
             self.__handle_move(move)
             
         self.__player_turn = True
